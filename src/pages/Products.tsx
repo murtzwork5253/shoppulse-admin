@@ -1,8 +1,11 @@
-// Placeholder to exercise ProtectedRoute redirects until the Products page is built (Session 6).
+import { Card } from '../components/ui/Card';
+import { EmptyState } from '../components/ui/EmptyState';
+
+// Placeholder until the products table is built.
 export default function Products() {
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-bold">Products</h1>
-    </main>
+    <Card>
+      <EmptyState title="Products" message="The products table will appear here." />
+    </Card>
   );
 }

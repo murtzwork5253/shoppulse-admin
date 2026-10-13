@@ -10,6 +10,9 @@ export type Product = {
   brand?: string;
   sku: string;
   availabilityStatus: string;
+  warrantyInformation: string;
+  shippingInformation: string;
+  returnPolicy: string;
   thumbnail: string;
   images: string[];
   reviews: { rating: number; comment: string; date: string; reviewerName: string }[];

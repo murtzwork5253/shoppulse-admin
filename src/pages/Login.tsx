@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 
 const inputClass =
@@ -7,8 +7,8 @@ const inputClass =
 
 export default function Login() {
   const { user, checking, login } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from ?? '/';
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -21,8 +21,9 @@ export default function Login() {
   if (checking) {
     return <div className="grid h-screen place-items-center text-slate-500">Loading…</div>;
   }
+  // Once login() sets the user, this branch does the redirect, so it must honour `from`.
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={from} replace />;
   }
 
   async function onSubmit(e: FormEvent) {
@@ -31,8 +32,6 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login(username.trim(), password);
-      const from = (location.state as { from?: string } | null)?.from;
-      navigate(from ?? '/', { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
       setSubmitting(false);

@@ -23,6 +23,8 @@ type Props<T> = {
   onSort?: (key: string) => void;
   emptyMessage?: string;
   skeletonRows?: number;
+  /** Accessible name for the table, read by screen readers but not shown. */
+  caption?: string;
 };
 
 export function DataTable<T>({
@@ -35,10 +37,12 @@ export function DataTable<T>({
   onSort,
   emptyMessage = 'No results found.',
   skeletonRows = 10,
+  caption,
 }: Props<T>) {
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
       <table className="w-full text-sm">
+        {caption && <caption className="sr-only">{caption}</caption>}
         <thead className="bg-slate-50 text-left text-xs text-slate-500 uppercase dark:bg-slate-800/50">
           <tr>
             {columns.map((col) => {

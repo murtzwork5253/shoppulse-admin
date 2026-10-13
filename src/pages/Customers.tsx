@@ -104,6 +104,7 @@ export default function Customers() {
       ) : (
         <>
           <DataTable
+            caption="Customers"
             columns={columns}
             rows={data?.users ?? []}
             getRowId={(u) => u.id}

@@ -112,6 +112,7 @@ export default function Dashboard() {
           </Link>
         </div>
         <DataTable
+          caption="Recent orders"
           columns={orderColumns}
           rows={data?.recentOrders ?? []}
           getRowId={(o) => o.id}

@@ -146,6 +146,7 @@ export default function Products() {
       ) : (
         <>
           <DataTable
+            caption="Products"
             columns={columns}
             rows={data?.products ?? []}
             getRowId={(p) => p.id}

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { api, TOKEN_KEY } from '../api/client';
+import { api, AUTH_EXPIRED_EVENT, TOKEN_KEY } from '../api/client';
 
 type AuthUser = {
   id: number;
@@ -30,6 +30,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(setUser)
       .catch(() => localStorage.removeItem(TOKEN_KEY))
       .finally(() => setChecking(false));
+  }, []);
+
+  // The API rejected our token (expired): drop the session, ProtectedRoute sends us to /login.
+  useEffect(() => {
+    const onExpired = () => setUser(null);
+    window.addEventListener(AUTH_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired);
   }, []);
 
   async function login(username: string, password: string) {

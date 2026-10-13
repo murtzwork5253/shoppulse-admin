@@ -98,6 +98,7 @@ export default function OrderDetail() {
           </Card>
 
           <DataTable
+            caption="Order items"
             columns={columns}
             rows={order?.products ?? []}
             getRowId={(i) => i.id}

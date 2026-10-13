@@ -79,6 +79,7 @@ export default function Orders() {
   return (
     <div className="space-y-4">
       <DataTable
+        caption="Orders"
         columns={columns}
         rows={data?.carts ?? []}
         getRowId={(o) => o.id}

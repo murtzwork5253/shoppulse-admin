@@ -10,6 +10,19 @@
   --color-brand-700: #4338ca;
 }
 
+/* Recharts tooltips are styled inline, so they read their colors from these variables. */
+:root {
+  --chart-surface: #ffffff;
+  --chart-border: #e2e8f0;
+  --chart-text: #0f172a;
+}
+
+.dark {
+  --chart-surface: #0f172a;
+  --chart-border: #1e293b;
+  --chart-text: #f1f5f9;
+}
+
 body {
   @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
 }

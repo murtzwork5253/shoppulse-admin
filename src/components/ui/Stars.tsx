@@ -15,7 +15,7 @@ export function Stars({ rating, size = 16 }: { rating: number; size?: number }) 
           size={size}
           aria-hidden
           fill={i < filled ? 'currentColor' : 'none'}
-          className={i < filled ? '' : 'text-slate-300 dark:text-slate-600'}
+          className={i < filled ? '' : 'text-line'}
         />
       ))}
     </span>

@@ -29,21 +29,22 @@ export function Pagination({
       aria-label="Pagination"
       className="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between"
     >
-      <p className="text-slate-500" aria-live="polite">
+      <p className="text-ink-2" aria-live="polite">
         Showing {formatNumber(first)}–{formatNumber(last)} of {formatNumber(total)}
       </p>
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
-          <span aria-hidden className="text-slate-500">
+          <span aria-hidden className="text-ink-2">
             Rows per page
           </span>
-          <div className="w-20">
+          <div className="w-[5.5rem]">
             <Select
               label="Rows per page"
               hideLabel
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="py-2"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -54,7 +55,7 @@ export function Pagination({
           </div>
         </div>
 
-        <span className="text-slate-500">
+        <span className="text-ink-2">
           Page {page} of {totalPages}
         </span>
 
@@ -63,7 +64,7 @@ export function Pagination({
             variant="secondary"
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
-            className="px-3"
+            className="px-3 py-2"
           >
             <ChevronLeft size={16} aria-hidden /> Previous
           </Button>
@@ -71,7 +72,7 @@ export function Pagination({
             variant="secondary"
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
-            className="px-3"
+            className="px-3 py-2"
           >
             Next <ChevronRight size={16} aria-hidden />
           </Button>

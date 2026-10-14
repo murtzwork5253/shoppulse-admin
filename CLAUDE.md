@@ -63,8 +63,11 @@ Never use `Set-Content -Encoding utf8` on JSON files: Windows PowerShell 5.1 add
 - TypeScript strict. No `any`; use `unknown` and narrow. Use `import type` for type-only imports.
 - Function components and hooks only. Named exports for components and hooks; default exports for page components (the router imports them that way).
 - Prettier config: single quotes, semicolons, print width 100, trailing commas `all`.
-- Tailwind only; no custom CSS beyond `src/index.css`. Brand color is indigo (`brand-*` tokens) for actions only. Body text `text-sm`, 8px spacing steps, numbers right-aligned in tables.
-- Every colored surface needs a `dark:` variant. Check dark mode on every new view.
+- Tailwind only; no custom CSS beyond `src/index.css`. Body text `text-sm`, 8px spacing steps, numbers right-aligned in tables.
+- Design system (defined in `src/index.css`): violet `brand-*` scale for actions, highlights and gradients; semantic tokens `bg-app`, `bg-surface`, `bg-surface-2`, `border-line`, `text-ink`, `text-ink-2` (muted text) and `text-ink-3` (icons and placeholders only, too low contrast for text). Use the tokens instead of raw `slate-*` colors: they switch with the theme, so a surface using them needs no `dark:` variant. Status colors are emerald (good), amber (warning), rose (bad).
+- Shared class strings (`focusRing`, `linkClass`, `rowLinkClass`, `backLinkClass`, `iconButtonClass`, `fieldClass`) live in `src/components/ui/styles.ts`. Cards are `rounded-2xl` with `shadow-card`; primary buttons and KPI tiles use brand gradients. The sidebar stays deep indigo in both themes.
+- Font is Inter, loaded from Google Fonts in `index.html`.
+- Check dark mode on every new view.
 - Env vars via `import.meta.env.VITE_*`; read in one place (`client.ts`).
 - Keep comments sparse: only explain a non-obvious why.
 - Don't add libraries beyond the guide without asking (stretch goals like TanStack Query, React Hook Form, Zod are post-launch only).

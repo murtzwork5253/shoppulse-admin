@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
 import { getUsers } from '../api/users';
 import { DataTable, type Column } from '../components/table/DataTable';
 import { Button } from '../components/ui/Button';
@@ -22,13 +23,13 @@ const columns: Column<User>[] = [
           width={40}
           height={40}
           loading="lazy"
-          className="size-10 shrink-0 rounded-full bg-slate-100 object-cover dark:bg-slate-800"
+          className="size-10 shrink-0 rounded-full bg-surface-2 object-cover ring-2 ring-line"
         />
         <div className="min-w-0">
           <p className="font-medium">
             {u.firstName} {u.lastName}
           </p>
-          <p className="text-xs text-slate-500">@{u.username}</p>
+          <p className="text-xs text-ink-2">@{u.username}</p>
         </div>
       </div>
     ),
@@ -73,11 +74,12 @@ export default function Customers() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="sm:w-72">
+      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-3 shadow-card sm:flex-row sm:items-center">
+        <div className="sm:w-80">
           <Input
             label="Search customers"
             hideLabel
+            icon={<Search size={16} />}
             type="search"
             placeholder="Search customers…"
             value={search}
@@ -98,7 +100,7 @@ export default function Customers() {
       </div>
 
       {error ? (
-        <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-2xl border border-line bg-surface shadow-card">
           <ErrorState message={error} onRetry={retry} />
         </div>
       ) : (

@@ -1,5 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react';
+import { Loader2 } from 'lucide-react';
 import { cx } from '../../utils/cx';
+import { focusRing } from './styles';
 
 type Variant = 'primary' | 'secondary' | 'ghost';
 
@@ -9,10 +11,10 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700',
-  secondary:
-    'border border-slate-300 bg-white text-slate-900 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800',
-  ghost: 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
+  primary:
+    'bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-[0_8px_20px_-8px_rgb(106_63_232/0.75)] hover:brightness-110',
+  secondary: 'border border-line bg-surface text-ink shadow-sm hover:bg-surface-2',
+  ghost: 'text-ink-2 hover:bg-surface-2 hover:text-ink',
 };
 
 export function Button({
@@ -28,12 +30,14 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:focus-visible:ring-offset-slate-950',
+        'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100',
+        focusRing,
         variants[variant],
         className,
       )}
       {...rest}
     >
+      {loading && <Loader2 size={16} className="animate-spin" aria-hidden />}
       {children}
     </button>
   );

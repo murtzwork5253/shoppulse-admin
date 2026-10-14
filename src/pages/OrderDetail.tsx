@@ -8,23 +8,21 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { useFetch } from '../hooks/useFetch';
 import type { CartItem } from '../types';
 import { formatCurrency, formatNumber } from '../utils/format';
+import { backLinkClass, rowLinkClass } from '../components/ui/styles';
 
 const columns: Column<CartItem>[] = [
   {
     key: 'title',
     header: 'Product',
     render: (item) => (
-      <Link
-        to={`/products/${item.id}`}
-        className="flex items-center gap-3 rounded font-medium hover:text-brand-600 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
-      >
+      <Link to={`/products/${item.id}`} className={rowLinkClass}>
         <img
           src={item.thumbnail}
           alt=""
           width={40}
           height={40}
           loading="lazy"
-          className="size-10 shrink-0 rounded bg-slate-100 object-cover dark:bg-slate-800"
+          className="size-10 shrink-0 rounded-xl bg-surface-2 object-cover ring-1 ring-line"
         />
         <span className="line-clamp-2">{item.title}</span>
       </Link>
@@ -47,13 +45,24 @@ const columns: Column<CartItem>[] = [
   },
 ];
 
-const backLink =
-  'inline-flex items-center gap-1 rounded text-sm text-slate-600 hover:text-brand-600 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none dark:text-slate-400';
-
-function Summary({ label, value }: { label: string; value: string }) {
+function Summary({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
   return (
-    <div>
-      <dt className="text-xs text-slate-500">{label}</dt>
+    <div
+      className={
+        highlight
+          ? 'rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 p-4 text-white'
+          : 'rounded-xl bg-surface-2/70 p-4'
+      }
+    >
+      <dt className={highlight ? 'text-xs text-white/80' : 'text-xs text-ink-2'}>{label}</dt>
       <dd className="mt-1 text-lg font-semibold tabular-nums">{value}</dd>
     </div>
   );
@@ -65,7 +74,7 @@ export default function OrderDetail() {
 
   return (
     <div className="space-y-4">
-      <Link to="/orders" className={backLink}>
+      <Link to="/orders" className={backLinkClass}>
         <ArrowLeft size={16} aria-hidden /> Back to orders
       </Link>
 
@@ -80,7 +89,7 @@ export default function OrderDetail() {
       ) : (
         <>
           <Card>
-            <h2 className="font-semibold">Order #{id}</h2>
+            <h2 className="text-lg font-semibold tracking-tight">Order #{id}</h2>
             {loading || !order ? (
               <Skeleton className="mt-4 h-14" />
             ) : (
@@ -92,7 +101,7 @@ export default function OrderDetail() {
                   label="Discount"
                   value={formatCurrency(order.total - order.discountedTotal)}
                 />
-                <Summary label="You pay" value={formatCurrency(order.discountedTotal)} />
+                <Summary label="You pay" value={formatCurrency(order.discountedTotal)} highlight />
               </dl>
             )}
           </Card>

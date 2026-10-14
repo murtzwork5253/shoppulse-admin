@@ -2,7 +2,7 @@
 
 A responsive admin dashboard for an online store, built with **React 19, TypeScript, Vite and Tailwind CSS**. It shows live business KPIs and charts, and lets an admin search, sort, filter and page through products, orders and customers pulled from a REST API.
 
-**🔗 Live demo:** [shoppulse-admin.vercel.app](https://shoppulse-admin.vercel.app) &nbsp;·&nbsp; **🎥 Video walkthrough:** [Watch (60 sec)](https://your-loom-or-youtube-link)
+**🔗 Live demo:** [shoppulse-admin.netlify.app](https://shoppulse-admin.netlify.app) &nbsp;·&nbsp; **🎥 Video walkthrough:** [Watch (60 sec)](https://your-loom-or-youtube-link)
 
 > **Demo login** — username: `emilys` · password: `emilyspass`
 
@@ -69,8 +69,9 @@ A responsive admin dashboard for an online store, built with **React 19, TypeScr
 | Data | [DummyJSON](https://dummyjson.com) REST API (products, carts, users, auth) |
 | State | React Context (auth, theme), custom hooks, URL search params |
 | Testing | Vitest, React Testing Library, jsdom |
-| Code quality | ESLint, Prettier |
-| Hosting | Vercel |
+| Code quality | oxlint, Prettier |
+| Hosting | Netlify |
+| CI/CD & security | GitHub Actions (lint, tests, build, secret scan, dependency audit, Semgrep), Dependabot |
 
 ---
 
@@ -107,8 +108,9 @@ Open http://localhost:5173 and sign in with the demo credentials above.
 | `npm run preview` | Preview the production build locally |
 | `npm run test` | Run tests in watch mode |
 | `npm run test:run` | Run all tests once |
-| `npm run lint` | Check code with ESLint |
+| `npm run lint` | Check code with oxlint |
 | `npm run format` | Format code with Prettier |
+| `npm run format:check` | Check formatting without changing files (used by CI) |
 
 ---
 
@@ -140,6 +142,19 @@ src/
 - **One reusable `DataTable`.** Products, orders and customers all use the same typed table component with column definitions, so new tables take minutes to add.
 - **Request cancellation.** `useFetch` aborts outdated requests with `AbortController`, so fast typing in the search box never shows stale results.
 - **Typed API layer.** Every response has a TypeScript type, which catches mismatches at build time instead of in production.
+
+---
+
+## 🔒 CI/CD and security
+
+Every pull request into `main` must pass these GitHub Actions checks before it can be merged:
+
+- **Lint, test and build:** Prettier check, oxlint, the Vitest suite and a type-checked production build.
+- **Secret scan:** gitleaks over the full git history, and a rule that blocks committed `.env` files.
+- **Dependency audit:** `npm audit`, failing on high or critical vulnerabilities in shipped dependencies.
+- **Code scan:** Semgrep static analysis of the source.
+
+Actions are pinned by commit SHA and Dependabot opens weekly update PRs. `main` is deployed to **Netlify** automatically; pull requests get a Deploy Preview. The site is served with a strict Content-Security-Policy and other security headers (see `netlify.toml`).
 
 ---
 

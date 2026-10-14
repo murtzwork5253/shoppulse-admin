@@ -20,6 +20,7 @@ Source of truth for scope and steps: `ShopPulse_Build_Guide.md` (14 steps, ~10 s
 | `npm run build` | Type-check + production build |
 | `npm run lint` | oxlint (Vite template default; used instead of ESLint) |
 | `npm run format` | Prettier (`prettier --write src`) |
+| `npm run format:check` | Prettier check without writing (what CI runs) |
 | `npm run test:run` | Vitest once (use this, not watch mode `npm test`) |
 
 Before calling any step done: `npm run lint`, `npm run test:run` and `npm run build` must all pass with zero errors.
@@ -53,6 +54,10 @@ Key decisions to preserve:
 ## Deployment
 
 Deploy on **Netlify** (not Vercel, despite the guide and README). Step 13 needs a `public/_redirects` file (`/*  /index.html  200`) or `netlify.toml` with an SPA redirect instead of `vercel.json`; build command `npm run build`, publish directory `dist`, env var `VITE_API_BASE_URL`. The README's Vercel mentions get updated at Step 14.
+
+## CI (GitHub Actions)
+
+`.github/workflows/ci.yml` runs on every PR into `main` and every push to `main`: `format:check`, `lint`, `test:run`, then `build` (which type-checks first). It is the same set of commands as "Before calling any step done" above, so run them locally before pushing. `main` is branch-protected: changes go through a PR and the CI and security checks must pass. Prettier uses `endOfLine: auto` because Windows checkouts have CRLF while CI has LF.
 
 ## Security checks (GitHub Actions)
 

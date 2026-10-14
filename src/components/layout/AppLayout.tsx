@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useMatches } from 'react-router';
+import { Outlet, useLocation, useMatches } from 'react-router';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 
 export function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { pathname } = useLocation();
 
   // Each route declares its title in `handle`; use the deepest one.
   const matches = useMatches();
@@ -32,8 +33,11 @@ export function AppLayout() {
           menuOpen={menuOpen}
           onMenuClick={() => setMenuOpen(true)}
         />
-        <main className="p-4 md:p-6">
-          <Outlet />
+        <main className="mx-auto w-full max-w-[1440px] flex-1 p-4 md:p-8">
+          {/* Keyed by path so each page fades in; query-string changes don't re-trigger it. */}
+          <div key={pathname} className="animate-fade-up">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useId, type SelectHTMLAttributes } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { cx } from '../../utils/cx';
-import { fieldClass } from './Input';
+import { fieldClass } from './styles';
 
 type Props = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
@@ -16,9 +17,20 @@ export function Select({ label, hideLabel, id, className, children, ...rest }: P
       <label htmlFor={selectId} className={cx('text-sm font-medium', hideLabel && 'sr-only')}>
         {label}
       </label>
-      <select id={selectId} className={cx(fieldClass, !hideLabel && 'mt-1', className)} {...rest}>
-        {children}
-      </select>
+      <div className={cx('relative', !hideLabel && 'mt-1.5')}>
+        <select
+          id={selectId}
+          className={cx(fieldClass, 'appearance-none pr-9', className)}
+          {...rest}
+        >
+          {children}
+        </select>
+        <ChevronDown
+          size={16}
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-3"
+        />
+      </div>
     </div>
   );
 }

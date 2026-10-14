@@ -7,16 +7,14 @@ import { useFetch } from '../hooks/useFetch';
 import { useTableParams } from '../hooks/useTableParams';
 import type { Cart } from '../types';
 import { formatCurrency, formatNumber } from '../utils/format';
+import { linkClass } from '../components/ui/styles';
 
 const columns: Column<Cart>[] = [
   {
     key: 'id',
     header: 'Order',
     render: (o) => (
-      <Link
-        to={`/orders/${o.id}`}
-        className="rounded font-medium text-brand-600 hover:underline focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none dark:text-brand-500"
-      >
+      <Link to={`/orders/${o.id}`} className={linkClass}>
         #{o.id}
       </Link>
     ),
@@ -54,7 +52,7 @@ const columns: Column<Cart>[] = [
     align: 'right',
     className: 'hidden sm:table-cell',
     render: (o) => (
-      <span className="text-green-600 dark:text-green-400">
+      <span className="text-emerald-600 dark:text-emerald-400">
         {formatCurrency(o.total - o.discountedTotal)}
       </span>
     ),
@@ -70,7 +68,7 @@ export default function Orders() {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <div className="rounded-2xl border border-line bg-surface shadow-card">
         <ErrorState message={error} onRetry={retry} />
       </div>
     );

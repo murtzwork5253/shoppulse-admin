@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
 import { Link } from 'react-router';
 import { getCategories, getProducts } from '../api/products';
 import { DataTable, type Column } from '../components/table/DataTable';
@@ -13,6 +14,7 @@ import { useFetch } from '../hooks/useFetch';
 import { useTableParams } from '../hooks/useTableParams';
 import type { Product } from '../types';
 import { formatCategory, formatCurrency } from '../utils/format';
+import { rowLinkClass } from '../components/ui/styles';
 
 const columns: Column<Product>[] = [
   {
@@ -20,17 +22,14 @@ const columns: Column<Product>[] = [
     header: 'Product',
     sortable: true,
     render: (p) => (
-      <Link
-        to={`/products/${p.id}`}
-        className="flex items-center gap-3 rounded font-medium hover:text-brand-600 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
-      >
+      <Link to={`/products/${p.id}`} className={rowLinkClass}>
         <img
           src={p.thumbnail}
           alt=""
           width={40}
           height={40}
           loading="lazy"
-          className="size-10 shrink-0 rounded bg-slate-100 object-cover dark:bg-slate-800"
+          className="size-10 shrink-0 rounded-xl bg-surface-2 object-cover ring-1 ring-line"
         />
         <span className="line-clamp-2">{p.title}</span>
       </Link>
@@ -61,6 +60,7 @@ const columns: Column<Product>[] = [
     header: 'Stock',
     sortable: true,
     align: 'right',
+    className: 'hidden sm:table-cell',
     render: (p) => p.stock,
   },
   {
@@ -106,11 +106,12 @@ export default function Products() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="sm:w-72">
+      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-3 shadow-card sm:flex-row sm:items-center">
+        <div className="sm:w-80">
           <Input
             label="Search products"
             hideLabel
+            icon={<Search size={16} />}
             type="search"
             placeholder="Search products…"
             value={search}
@@ -140,7 +141,7 @@ export default function Products() {
       </div>
 
       {error ? (
-        <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-2xl border border-line bg-surface shadow-card">
           <ErrorState message={error} onRetry={retry} />
         </div>
       ) : (

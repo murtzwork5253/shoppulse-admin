@@ -1,12 +1,10 @@
 import { LogOut, Menu, Monitor, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme, type Theme } from '../../context/ThemeContext';
+import { iconButtonClass } from '../ui/styles';
 
 const nextTheme: Record<Theme, Theme> = { light: 'dark', dark: 'system', system: 'light' };
 const themeIcon = { light: Sun, dark: Moon, system: Monitor };
-
-const iconButton =
-  'rounded-lg p-2 text-slate-600 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 dark:text-slate-300 dark:hover:bg-slate-800';
 
 type Props = {
   title: string;
@@ -20,42 +18,45 @@ export function Topbar({ title, menuOpen, onMenuClick }: Props) {
   const ThemeIcon = themeIcon[theme];
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:px-6 dark:border-slate-800 dark:bg-slate-900/90">
+    <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-line bg-surface/75 px-4 backdrop-blur-xl md:px-8">
       <button
         type="button"
         onClick={onMenuClick}
         aria-label="Open menu"
         aria-expanded={menuOpen}
         aria-controls="sidebar"
-        className={`${iconButton} md:hidden`}
+        className={`${iconButtonClass} -ml-2 md:hidden`}
       >
         <Menu size={20} aria-hidden />
       </button>
 
-      <h1 className="flex-1 truncate text-lg font-semibold">{title}</h1>
+      <h1 className="flex-1 truncate text-lg font-semibold tracking-tight">{title}</h1>
 
       <button
         type="button"
         onClick={() => setTheme(nextTheme[theme])}
         aria-label={`Theme: ${theme}. Switch to ${nextTheme[theme]}`}
         title={`Theme: ${theme}`}
-        className={iconButton}
+        className={iconButtonClass}
       >
         <ThemeIcon size={20} aria-hidden />
       </button>
 
       {user && (
-        <div className="flex items-center gap-2 pl-2">
+        <div className="flex items-center gap-3 border-l border-line pl-3">
           <img
             src={user.image}
             alt=""
-            width={32}
-            height={32}
-            className="size-8 rounded-full bg-slate-200 dark:bg-slate-700"
+            width={36}
+            height={36}
+            className="size-9 rounded-full bg-surface-2 ring-2 ring-brand-500/40"
           />
-          <span className="hidden text-sm font-medium sm:inline">
-            {user.firstName} {user.lastName}
-          </span>
+          <div className="hidden leading-tight sm:block">
+            <p className="text-sm font-medium">
+              {user.firstName} {user.lastName}
+            </p>
+            <p className="text-xs text-ink-2">Administrator</p>
+          </div>
         </div>
       )}
 
@@ -64,7 +65,7 @@ export function Topbar({ title, menuOpen, onMenuClick }: Props) {
         onClick={logout}
         aria-label="Log out"
         title="Log out"
-        className={iconButton}
+        className={iconButtonClass}
       >
         <LogOut size={20} aria-hidden />
       </button>

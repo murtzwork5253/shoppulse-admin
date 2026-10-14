@@ -54,6 +54,10 @@ Key decisions to preserve:
 
 Deploy on **Netlify** (not Vercel, despite the guide and README). Step 13 needs a `public/_redirects` file (`/*  /index.html  200`) or `netlify.toml` with an SPA redirect instead of `vercel.json`; build command `npm run build`, publish directory `dist`, env var `VITE_API_BASE_URL`. The README's Vercel mentions get updated at Step 14.
 
+## Security checks (GitHub Actions)
+
+`.github/workflows/security.yml` runs on every PR into `main`, every push to `main`, and weekly: secret scan of the full git history (gitleaks, plus a rule that blocks committed `.env` files), `npm audit` (fails on high/critical in shipped dependencies), and Semgrep static analysis. CodeQL and dependency review only run if the repo is public (they need GitHub Advanced Security on private repos). Third-party actions are pinned by commit SHA with the version in a comment; Dependabot (`.github/dependabot.yml`) opens weekly PRs to update them and npm packages. When changing the workflow, keep pins and `permissions: contents: read` as the default.
+
 ## Windows/PowerShell gotcha
 
 Never use `Set-Content -Encoding utf8` on JSON files: Windows PowerShell 5.1 adds a BOM and breaks `JSON.parse` (it broke the build once). Use the Edit/Write tools instead.

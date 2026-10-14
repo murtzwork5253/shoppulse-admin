@@ -1,0 +1,143 @@
+name: Security
+
+# Scans every pull request into main, every push to main, and the whole repo once a week
+# (new vulnerabilities are disclosed against old dependencies all the time).
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+# Least privilege: jobs that need more ask for it themselves.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # 1. Leaked secrets: scans the full git history, so a key that was committed and
+  #    later deleted is still caught. Findings are redacted in the log.
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Block committed .env files
+        run: |
+          tracked=$(git ls-files | grep -E '(^|/)\.env(\..+)?$' | grep -vE '\.env\.(example|sample|template)$' || true)
+          if [ -n "$tracked" ]; then
+            echo "::error::Environment files must not be committed:"
+            echo "$tracked"
+            exit 1
+          fi
+
+      - name: Install gitleaks (pinned, checksum verified)
+        env:
+          VERSION: 8.30.1
+          SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          curl -sSfL -o gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz"
+          echo "${SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo mv gitleaks /usr/local/bin/
+
+      - name: Scan git history
+        run: gitleaks git --redact --verbose --exit-code 1 .
+
+  # 2. Known vulnerabilities in dependencies.
+  dependencies:
+    name: Dependency audit (npm)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # --ignore-scripts: install scripts of dependencies never run in this job.
+      - run: npm ci --ignore-scripts
+
+      - name: Fail on high or critical vulnerabilities in shipped dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Report all vulnerabilities, including dev tooling (informational)
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+  # 3. Static analysis of our own code (injection, XSS, unsafe patterns).
+  #    Semgrep works on private repos for free, unlike CodeQL.
+  sast:
+    name: Code scan (Semgrep)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Semgrep
+        run: pipx install semgrep==1.180.0
+
+      - name: Scan source
+        run: |
+          semgrep scan \
+            --config p/javascript --config p/typescript --config p/react \
+            --error --metrics off src index.html
+
+  # 4 and 5 need GitHub code scanning / dependency graph, which are free on public repos
+  # but need Advanced Security on private ones. They switch on automatically if this
+  # repo is made public.
+  codeql:
+    name: CodeQL
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          languages: javascript-typescript
+          build-mode: none
+
+      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          category: /language:javascript-typescript
+
+  dependency-review:
+    name: Dependency review
+    if: ${{ github.event_name == 'pull_request' && !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Blocks a PR that adds or upgrades to a dependency with a known high-severity advisory.
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: never

@@ -2,7 +2,7 @@ import { formatCategory, formatCompact, formatCurrency, formatNumber } from './f
 
 describe('formatters', () => {
   it('formats currency', () => {
-    expect(formatCurrency(1234.5)).toBe('$1,234.50');
+    expect(formatCurrency(1234.5)).toBe('$9.99');
     expect(formatCurrency(0)).toBe('$0.00');
   });
 

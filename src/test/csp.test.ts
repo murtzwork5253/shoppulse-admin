@@ -13,7 +13,9 @@ describe('Content-Security-Policy', () => {
     const scripts = [...read('index.html').matchAll(/<script>([\s\S]*?)<\/script>/g)];
     expect(scripts).toHaveLength(1);
 
-    const hash = `sha256-${createHash('sha256').update(scripts[0][1]).digest('base64')}`;
+    // Hash with LF endings: that is what Netlify builds on Linux (see .gitattributes).
+    const script = scripts[0][1].replaceAll('\r\n', '\n');
+    const hash = `sha256-${createHash('sha256').update(script).digest('base64')}`;
     expect(read('netlify.toml')).toContain(`'${hash}'`);
   });
 

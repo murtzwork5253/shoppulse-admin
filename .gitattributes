@@ -1,0 +1,3 @@
+# index.html is hashed for the Content-Security-Policy in netlify.toml, so its bytes must be
+# identical on Windows and Linux.
+index.html text eol=lf
